@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>¡Bienvenido a Nuestro Juego Amor!</h1>
+        <div id="game">
+            <div id="question-container" class="hide">
+                <div id="question" class="question"></div>
+                <ul id="answer-buttons" class="options"></ul>
+            </div>
+            <button id="start-btn" class="btn">Comenzar</button>
+            <button id="next-btn" class="btn hide">Siguiente</button>
+            <div id="result-container" class="result hide"></div>
+        </div>
+    </div>
+
+    <script>
+const startButton = document.getElementById('start-btn');
+const nextButton = document.getElementById('next-btn');
+const questionContainer = document.getElementById('question-container');
+const questionElement = document.getElementById('question');
+const answerButtonsElement = document.getElementById('answer-buttons');
+const resultContainer = document.getElementById('result-container');
+
+let currentQuestionIndex, score;
+
+const questions = [
+    {
+        question: '¿Que dia nos conocimos?',
+        answers: [
+            { text: '13 de Noviembre', correct: true },
+            { text: '13 de Octubre', correct: false },
+            { text: '13 de Diciembre', correct: false },
+        ]
+    },
+    {
+        question: '¿Que dia nos volvimos a ver?',
+        answers: [
+            { text: '22 de Abril', correct: true },
+            { text: '20 de Mayo', correct: false },
+            { text: '18 de Abril', correct: false },
+        ]
+    },
+    {
+        question: '¿En que lugar nos volvimos a ver?',
+        answers: [
+            {text: 'En un restaurante', correct: false},
+            {text: 'En el aeropuerto', correct: true},
+            {text: 'En una fiesta', correct: false},
+        ]
+    },
+    {
+        question: '¿Que llevabas puesto el dia que nos conocimos?',
+        answers: [
+            {text: 'Un vestido negro', correct: true},
+            {text: 'Jeans y camisa blanca', correct: false},
+            {text: 'Una camisa azul', correct: false},
+        ]
+    },
+    {
+        question: '¿Que cancion se convirtio en nuestra cancion?',
+        answers: [
+            {text: 'Prometo', correct: false},
+            {text: 'Confieso', correct: true},
+            {text: 'Robarte un beso', correct: false},
+        ]
+    },
+    {
+        question: '¿Cuando estabamos juntos, estabamos viendo una pelicula y te quedaste dormida, Que pelicula era?',
+        answers: [
+            {text: 'Kung Fu Panda', correct: true},
+            {text: 'Toy Story', correct: false},
+            {text: 'El Conjuro', correct: false},
+        ]
+    },
+    // Añadir más preguntas aquí
+];
+
+startButton.addEventListener('click', startGame);
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    setNextQuestion();
+});
+
+function startGame() {
+    startButton.classList.add('hide');
+    currentQuestionIndex = 0;
+    score = 0;
+    questionContainer.classList.remove('hide');
+    resultContainer.classList.add('hide');
+    setNextQuestion();
+}
+
+function setNextQuestion() {
+    resetState();
+    if (currentQuestionIndex < questions.length) {
+        showQuestion(questions[currentQuestionIndex]);
+    } else {
+        showResult();
+    }
+}
+
+function showQuestion(question) {
+    questionElement.innerText = question.question;
+    question.answers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerText = answer.text;
+        button.classList.add('btn');
+        button.addEventListener('click', () => selectAnswer(answer));
+        answerButtonsElement.appendChild(button);
+    });
+}
+
+function resetState() {
+    nextButton.classList.add('hide');
+    while (answerButtonsElement.firstChild) {
+        answerButtonsElement.removeChild(answerButtonsElement.firstChild);
+    }
+}
+
+function selectAnswer(answer) {
+    const buttons = Array.from(answerButtonsElement.children);
+
+    // Marca la opción seleccionada
+    buttons.forEach(button => {
+        button.classList.remove('selected');
+        if (button.innerText === answer.text) {
+            button.classList.add('selected');
+        }
+    });
+
+    if (answer.correct) {
+        score++;
+    }
+
+    // Mostrar el botón "Siguiente" o el resultado final
+    if (currentQuestionIndex < questions.length - 1) {
+        nextButton.classList.remove('hide');
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    questionContainer.classList.add('hide');
+    resultContainer.classList.remove('hide');
+    
+    if (score === questions.length) {
+        resultContainer.innerText = `Has respondido todas las preguntas correctamente amor, eres la mejor mi vida. Tu puntaje es: ${score} de ${questions.length} TE AMOOOO`;
+    } else {
+        resultContainer.innerText = `¡Juego terminado! Tu puntaje es: ${score} de ${questions.length}`;
+    }
+    
+    startButton.innerText = 'Reiniciar';
+    startButton.classList.remove('hide');
+}
+
+    </script>
+</body>
+</html>
